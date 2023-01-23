@@ -44,7 +44,7 @@
             function sendMessage() {
                 var newmessage = document.getElementById("message");
                 if(newmessage != null){
-                    console.log(newmessage);
+                    conn.send(newmessage.value);
                 }
                 return false; // if we don't put this form will try to navigate
             }
@@ -57,7 +57,7 @@
 
                 if (window["WebSocket"]) {
                     console.log("supports WebSockets");
-                    new WebSocket("ws://" + document.location.host + "/ws"); // api endpoint
+                    conn = new WebSocket("ws://" + document.location.host + "/ws"); // api endpoint
                 } else {
                     alert("Browser does not support WebSockets");
                 }
