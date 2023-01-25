@@ -29,17 +29,17 @@
                 <input type="text" id="message" name="message"><br><br>
                 <input type="submit" value="Send message">
             </form>
+             <div style="border: 3px; margin-top: 30px;">
+                <form id="login-form">
+                    <label for="username">username:</label>
+                    <input type="text" id="username" name="username"><br>
+                    <label for="password">password:</label>
+                    <input type="text" id="password" name="password"><br><br>
+                    <input type="submit" value="Login">
+                </form>
+            </div>
         </div>
-        <div style="border: 3px; margin-top: 30px;">
-            <form id="login-form">
-                <label for="username">username:</label>
-                <input type="text" id="username" name="username"><br>
-                <label for="password">password:</label>
-                <input type="text" id="password" name="password"><br><br>
-                <input type="submit" value="Login">
-            </form>
-        </div>
-        <script>
+               <script>
             var selectedChat = "general";
 
             class Event {
@@ -113,7 +113,7 @@
                  if (window["WebSocket"]) {
                     console.log("supports WebSockets");
                     conn = new WebSocket("ws://" + document.location.host +
-                        "/ws?otp=", otp); // api endpoint
+                        "/ws?otp=" + otp); // api endpoint
 
                     conn.onopen = function(evt) {
                         document.getElementById("connection-header").innerHTML
