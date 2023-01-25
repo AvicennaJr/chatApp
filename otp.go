@@ -23,7 +23,7 @@ func NewRetentionMap(ctx context.Context, retentionPeriod time.Duration) Retenti
 
 func (rm RetentionMap) NewOTP() OTP {
 	o := OTP{
-		Key:     uuid.NewString,
+		Key:     uuid.NewString(),
 		Created: time.Now(),
 	}
 
