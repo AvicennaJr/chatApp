@@ -64,6 +64,14 @@
                 }
             }
 
+
+            class ChangeChatRoomEvent {
+                constructor(name) {
+                    this.name = name;
+                }
+            }
+
+            
             function routeEvent(event) {
                 if (event.type == undefined) {
                     alert("How do we handle undefined nigga?");
@@ -100,9 +108,19 @@
             function changeChatroom() {
                 var newchat = document.getElementById("chatroom");
                 if(newchat != null && newchat.value != selectedChat){
-                    console.log(newchat);
+                    selectedChat = newchat.value;
+                    header = document.getElementById("chat-header").innerHTML =
+                        "Currently in chatroom: " + selectedChat;
+
+                    let changeEvent = new ChangeChatRoomEvent(selectedChat);
+
+                    sendEvent("change_chatroom", changeEvent);
+                    textarea = document.getElementById("chatmessages")
+                    textarea.innerHTML = `You changed into room:
+                    ${selectedChat}`;  
                 }
-                return false; // if we don't put this form will try to navigate
+
+                return false; // otherwise it will redirect
             }
 
 
