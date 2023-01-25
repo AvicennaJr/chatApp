@@ -112,7 +112,7 @@
             function connectWebsocket(otp) {
                  if (window["WebSocket"]) {
                     console.log("supports WebSockets");
-                    conn = new WebSocket("ws://" + document.location.host +
+                    conn = new WebSocket("wss://" + document.location.host +
                         "/ws?otp=" + otp); // api endpoint
 
                     conn.onopen = function(evt) {
