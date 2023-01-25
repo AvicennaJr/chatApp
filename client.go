@@ -3,8 +3,15 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"time"
 
 	"github.com/gorilla/websocket"
+)
+
+// check heartbeat
+var (
+	pongWait     = 10 * time.Second
+	pingInterval = (pongWait * 9) / 10
 )
 
 // for managing new clients
@@ -33,6 +40,12 @@ func (c *Client) readMessages() {
 		c.manager.removeClient(c)
 	}()
 
+	if err := c.connection.SetReadDeadline(time.Now().Add(pongWait)); err != nil {
+		log.Println(err)
+	}
+
+	c.connection.SetPongHandler(c.pongHandler)
+
 	for {
 		_, payLoad, err := c.connection.ReadMessage()
 		if err != nil {
@@ -60,6 +73,7 @@ func (c *Client) writeMessages() {
 		c.manager.removeClient(c)
 	}()
 
+	ticker := time.NewTicker(pingInterval)
 	for {
 		select {
 		case message, ok := <-c.egress:
@@ -81,6 +95,21 @@ func (c *Client) writeMessages() {
 			}
 
 			log.Println("message sent")
+
+		case <-ticker.C:
+			log.Println("ping")
+
+			// send a ping to the clients
+
+			if err := c.connection.WriteMessage(websocket.PingMessage, []byte(``)); err != nil {
+				log.Println("Send ping error: ", err)
+				return
+			}
 		}
 	}
+}
+
+func (c *Client) pongHandler(pongMsg string) error {
+	log.Println("pong")
+	return c.connection.SetReadDeadline(time.Now().Add(pongWait))
 }
