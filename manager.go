@@ -136,8 +136,20 @@ func (m *Manager) routeEvent(event Event, c *Client) error {
 
 func (m *Manager) setupEventHandlers() {
 	m.handlers[EventSendMessage] = SendMessage
+	m.handlers[EventChangeRoom] = ChangeRoom
 }
 
+func ChangeRoom(event Event, c *Client) error {
+	var changeRoomEvent ChangeChatRoomEvent
+
+	if err := json.Unmarshal(event.PayLoad, &changeRoomEvent); err != nil {
+		return fmt.Errorf("bad payload: %v", err)
+	}
+
+	c.chatroom = changeRoomEvent.Name
+
+	return nil
+}
 func SendMessage(event Event, c *Client) error {
 	var chatevent SendMessageEvent
 
@@ -163,7 +175,10 @@ func SendMessage(event Event, c *Client) error {
 	}
 
 	for client := range c.manager.clients {
-		client.egress <- outgoingEvent
+
+		if client.chatroom == c.chatroom {
+			client.egress <- outgoingEvent
+		}
 	}
 	return nil
 }
